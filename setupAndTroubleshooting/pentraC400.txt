@@ -1,0 +1,29 @@
+For Pentra C400 data stream to work the following steps must be completed 
+
+on the Pentra C400...
+1. Ensure USB export is active.
+    * Navigate to Services menu and on the Analyzer tab there is a checkbox called "Export of the results on USB Key". Ensure this box is checked.
+2. Access Windows on Pentra C400:  
+    * Login to "Tech" user on the Pentra C400 software 
+    * Navigate to 'Diagnostics' and then click the folder explorer icon at the bottom left corner of the screen.
+3. Get the computer name for the Pentra C400:
+    * Go to Start and right-click on Computer and select properties.
+    * Find the field named "Computer name" and write down its value (you will need it later)
+4. Share USB Export folder.  
+    *  Navigate to E://
+    *  There should be a folder named "Export".  Right-click on folder and select properties.  Select "share this folder".  An error diaglog might appear saying sharing is not possible.  Just igonore this. 
+5.  Add User/Password that matches current CWC nework credentials. 
+    *  A Windows User name will need to be created (if one does not already exist) that matches current CWC network credentials for Username and Password.  (e.g. GonzalesLab).  
+       If the password changes it will need to be update here also.
+    *  To change the password navigate to...
+
+	 Control Panel/All Control Panel Items/User Accounts/Manage Accounts/Change an Account
+
+       Select user account (e.g. GonzalesLab) and then select Change Password  (Make sure this password matches current CWC network credentials)
+
+On the computer running the node server....
+1. Map Network Drive
+    * Right-Click on Nework and select `Map Nework Drive`
+    * Enter "\\" followed by the computer name from the Pentra (see above).  (e.g. \\HORIBA-17BMACT).  
+    * Click browse.  You should see the available share folders. Select the share folder for the USB export. Select Drive letter of Z and map the drive.
+    * Open `paths.js' in the NodeJS Server directory and ensure Pentra C400 Path is correct (e.g. "Z:\\").  Change if necessary.  

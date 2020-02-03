@@ -1,0 +1,12 @@
+require(`./dma-server.js`);
+console.log("first...");
+require(`./pentra-server.js`);
+console.log("second...");
+require('./tiamo-server.js');
+console.log("third...");
+require('./tj-server.js');
+console.log("fourth...");
+require('./chemWell-server.js');
+console.log("fifth...");
+require('./futura.js');
+console.log("sixth...");
