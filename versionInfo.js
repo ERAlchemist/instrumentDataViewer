@@ -1,5 +1,10 @@
-const currentVersion = "1.6.1";
+const currentVersion = "1.6.2";
+
 const updateInfo = {
+    "1.6.2" : {
+        "changes": ["Refactored code for reading and parsing PDF files for DMA data stream.", "Removing 'Data' words from instrument titles on navigation bar"], 
+        "Date": "2/6/20"
+    },
     "1.6.1" : {
         "changes": ["Improved display of Futura Data by rounding the concentration numbers and merging the FSO2 and TSO2 data onto a single line"], 
         "Date": "1/17/20"

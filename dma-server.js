@@ -76,7 +76,6 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
   const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-  //  fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
     getData();
   try{
     rawData = fs.readFileSync('./data/dmaData.json');
@@ -89,29 +88,9 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
         <tr><thead class="thead-light">${fieldHeaders.map(field => `<th scope="col">${field}</th>`).join('')}</thead></tr>`)
       //add data to HTML table....
         let count = 0;
-        // let newRecords = strings.filter(x=> x.match(/Sample Information:/)).map(x=> new Analysis_DMA(x)).sort((a,b) => b.id - a.id);
-        // console.log("new records are...");
-        // newRecords.length > 0 ? console.log(newRecords): console.log("No new records created");
-        // let dmaRecords = newRecords.concat(records).sort((a,b)=>b.id-a.id);
-        // let set = [...new Set(dmaRecords.map(x=>x.id))];
-        // let noDuplicates = [];
-        // set.forEach(id=>{
-        //    let record = dmaRecords.filter(rec=>rec.id == id);
-        //   noDuplicates.push(record[0]);
-        // });
-        // dmaRecords = noDuplicates;
-        //  console.log(`${instrumentName}: Total records = ${dmaRecords.length}`);
-        // try {
-        //   fs.writeFileSync('./data/dmaData.JSON',JSON.stringify(dmaRecords), 'utf8');
-        //    console.log(newRecords.length);
-        //    const message = newRecords.length > 0 ? "New data was added to file!" : "No new data found"
-        //    console.log(`${instrumentName}: ${message}`);
-        //  } catch (err){
-        //    console.log(err);
-        // }
-       let records3 = records;
-       for(let i=0; i<records3.length; i++){
-          let rec = records3[i];
+       
+       for(let i=0; i<records.length; i++){
+          let rec = records[i];
           if(rec == undefined) continue;
           if(rec.dateTime == "Invalid Date") continue;
           res.write(`<tbody><tr><td data-toggle="tooltip" title="Time">${rec.dateTime}</td><td data-toggle="tooltip" title="Sample Name">${rec.name}</td><td data-toggle="tooltip" title="Test Method">${rec.method}</td>`)
@@ -135,7 +114,6 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
         res.end(`  </body>
                   </html>`);
         console.log("display count is " + count);
-      //  newRecords = [];
   }).listen(port, hostname, () => {
     console.log(`${instrumentName} data visible at http://${hostname}:${port}/`);
   });
