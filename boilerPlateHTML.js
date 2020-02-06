@@ -15,7 +15,7 @@ const boilerPlateHTML = (instrumentName, currentVersion ) => `<!doctype html>
        <meta charset="utf-8">
        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-       <title>GNZ Data Server - ${instrumentName}</title>
+       <title>Instrument Data Viewer - ${instrumentName}</title>
      </head>
    <body>
      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -34,27 +34,27 @@ const boilerPlateHTML = (instrumentName, currentVersion ) => `<!doctype html>
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
      <a class="navbar-brand" href="">
        <img src="https://icon-library.net/images/node-js-icon/node-js-icon-11.jpg" height="80px" width="80px" class="d-inline-block align-top" />
-       Gonzales Lab Data Server   <div class="d-inline-block align-right" style="font-size: 10px;">v. ${currentVersion}</div>
+       Instrument Data Viewer   <div class="d-inline-block align-right" style="font-size: 10px;">v. ${currentVersion}</div>
      </a>
        <div class="collapse navbar-collapse" id="navbarNav">
        <ul class="navbar-nav">
          <li class="${instrumentName == '855 Auto-Titrator "Tiamo"' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.tiamoServer}"> Tiamo Data </a>
+           <a class="nav-link" href="${URLs.tiamoServer}"> Tiamo </a>
          </li>
          <li class="${instrumentName == '814 Auto-Titrator "TJ"' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.tjServer}"> TJ Data </a>
+           <a class="nav-link" href="${URLs.tjServer}"> 'TJ' </a>
          </li>
          <li class="${instrumentName == 'Pentra C400' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.pentraServer}"> Pentra Data </a>
+           <a class="nav-link" href="${URLs.pentraServer}"> Pentra C400 </a>
          </li>
          <li class="${instrumentName == 'Anton Paar DMA 5000 M' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.dmaServer}"> Anton Paar 5000 M Data </a>
+           <a class="nav-link" href="${URLs.dmaServer}"> Anton Paar DMA 5000 M </a>
          </li>
          <li class="${instrumentName == 'ChemWell' ? "nav-item active" : "nav-item"}">
-          <a class="nav-link" href="${URLs.chemWellServer}"> ChemWell Data </a>
+          <a class="nav-link" href="${URLs.chemWellServer}"> ChemWell </a>
        </li>
        <li class="${instrumentName == 'Futura' ? "nav-item active" : "nav-item"}">
-       <a class="nav-link" href="${URLs.futuraServer}"> Futura Data </a>
+       <a class="nav-link" href="${URLs.futuraServer}"> Futura </a>
     </li>
        </ul>
      </div>

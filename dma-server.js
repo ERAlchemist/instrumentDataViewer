@@ -9,6 +9,7 @@ const fs = require('fs');
 const pdf = require('pdf-parse');
 const pdfsPath = require('./paths.js').paths[instrumentName];
 const moveFile = require('move-file');
+const os = require('os');
 
 class Analysis_DMA {
   constructor(string){
@@ -36,16 +37,47 @@ const process = (name) => {
     let raw = fs.readFileSync(fileUrl);
     pdf(raw).then((data)=> strings.push( `${data.text}---url---${fileUrl}` ))
     try{
-      moveFile(fileUrl, `C:/Users/GonzalesLab/Desktop/dma file archive/${fileUrl.split("/").reverse()[0]}`);
+      moveFile(fileUrl, `C:/Users/${os.userInfo().username}/Desktop/dma file archive/${fileUrl.split("/").reverse()[0]}`);
     }catch (err) {
           console.log(err);
         }
+};
+const getData = () => {
+  fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
+  try{
+      rawData = fs.readFileSync('./data/dmaData.json');
+      records = JSON.parse(rawData);
+      console.log("records from json is now " + records.length);
+    } catch (err) {
+     console.log(err);
+    }
+    let newRecords = strings.filter(x=> x.match(/Sample Information:/)).map(x=> new Analysis_DMA(x)).sort((a,b) => b.id - a.id);
+    console.log("new records are...");
+    newRecords.length > 0 ? console.log(newRecords): console.log("No new records created");
+    let dmaRecords = newRecords.concat(records).sort((a,b)=>b.id-a.id);
+    let set = [...new Set(dmaRecords.map(x=>x.id))];
+    let noDuplicates = [];
+    set.forEach(id=>{
+       let record = dmaRecords.filter(rec=>rec.id == id);
+      noDuplicates.push(record[0]);
+    });
+    dmaRecords = noDuplicates;
+    console.log(`${instrumentName}: Total records = ${dmaRecords.length}`);
+    try {
+      fs.writeFileSync('./data/dmaData.JSON',JSON.stringify(dmaRecords), 'utf8');
+       console.log(newRecords.length);
+       const message = newRecords.length > 0 ? "New data was added to file!" : "No new data found"
+       console.log(`${instrumentName}: ${message}`);
+     } catch (err){
+       console.log(err);
+    }
 };
 const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Density (g/cm³)", "Specific Gravity", "Ethanol  OIML-ITS-90 (% v/v)", "PDF"];
   const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-    fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
+  //  fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
+    getData();
   try{
     rawData = fs.readFileSync('./data/dmaData.json');
     records = JSON.parse(rawData);
@@ -57,27 +89,27 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
         <tr><thead class="thead-light">${fieldHeaders.map(field => `<th scope="col">${field}</th>`).join('')}</thead></tr>`)
       //add data to HTML table....
         let count = 0;
-        let newRecords = strings.filter(x=> x.match(/Sample Information:/)).map(x=> new Analysis_DMA(x)).sort((a,b) => b.id - a.id);
-        console.log("new records are...");
-        newRecords.length > 0 ? console.log(newRecords): console.log("No new records created");
-        let dmaRecords = newRecords.concat(records).sort((a,b)=>b.id-a.id);
-        let set = [...new Set(dmaRecords.map(x=>x.id))];
-        let noDuplicates = [];
-        set.forEach(id=>{
-           let record = dmaRecords.filter(rec=>rec.id == id);
-          noDuplicates.push(record[0]);
-        });
-        dmaRecords = noDuplicates;
-          console.log(`${instrumentName}: Total records = ${dmaRecords.length}`);
-        try {
-          fs.writeFileSync('./data/dmaData.JSON',JSON.stringify(dmaRecords), 'utf8');
-           console.log(newRecords.length);
-           const message = newRecords.length > 0 ? "New data was added to file!" : "No new data found"
-           console.log(`${instrumentName}: ${message}`);
-         } catch (err){
-           console.log(err);
-        }
-       let records3 = dmaRecords;
+        // let newRecords = strings.filter(x=> x.match(/Sample Information:/)).map(x=> new Analysis_DMA(x)).sort((a,b) => b.id - a.id);
+        // console.log("new records are...");
+        // newRecords.length > 0 ? console.log(newRecords): console.log("No new records created");
+        // let dmaRecords = newRecords.concat(records).sort((a,b)=>b.id-a.id);
+        // let set = [...new Set(dmaRecords.map(x=>x.id))];
+        // let noDuplicates = [];
+        // set.forEach(id=>{
+        //    let record = dmaRecords.filter(rec=>rec.id == id);
+        //   noDuplicates.push(record[0]);
+        // });
+        // dmaRecords = noDuplicates;
+        //  console.log(`${instrumentName}: Total records = ${dmaRecords.length}`);
+        // try {
+        //   fs.writeFileSync('./data/dmaData.JSON',JSON.stringify(dmaRecords), 'utf8');
+        //    console.log(newRecords.length);
+        //    const message = newRecords.length > 0 ? "New data was added to file!" : "No new data found"
+        //    console.log(`${instrumentName}: ${message}`);
+        //  } catch (err){
+        //    console.log(err);
+        // }
+       let records3 = records;
        for(let i=0; i<records3.length; i++){
           let rec = records3[i];
           if(rec == undefined) continue;
@@ -103,7 +135,7 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
         res.end(`  </body>
                   </html>`);
         console.log("display count is " + count);
-        newRecords = [];
+      //  newRecords = [];
   }).listen(port, hostname, () => {
     console.log(`${instrumentName} data visible at http://${hostname}:${port}/`);
   });
