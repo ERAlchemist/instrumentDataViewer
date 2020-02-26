@@ -1,7 +1,7 @@
 ﻿NodeJS Data Server
 
 What is it?
-A simple HTTP Web Server built with NodeJS (server-side Javascript).  It can read and display data from multiple sources
+A simple HTTP web server built with NodeJS (server-side Javascript).  It can read and display data from multiple sources
 and allows for easy retrieval of data from multiple instruments in real time without needing to open multiple different export files.
 
 To start all servers at once....

@@ -1,0 +1,13 @@
+Configuration Notes:
+
+On the computer with the Futura software installed, the software installation folder (e.g. 'C:\Futura') must be shared to be accessible on the network.
+The correct path to the database file needs to be in the paths.js file. 
+The path should have the following format:
+
+   	\\serverName\share\pathToDBfile
+
+  serverName is the computer name or the IP address 
+  share is the name of the shared folder
+  pathToDBfile is the relative path from the share folder to the database file (.db)
+
+

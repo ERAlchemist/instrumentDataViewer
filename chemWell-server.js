@@ -14,7 +14,7 @@ let year = arr[0],
     month = arr[1];
 
 const chemWellPath = require('./paths.js').paths[instrumentName];
-let archive = `${chemWellPath}/dbTest_Archive_${year}_${month}.mdb`; // The archive database file for currrent month and year
+let archive = `${chemWellPath}/dbTest_Archive_${year}_${parseInt(month)}.mdb`; // The archive database file for currrent month and year
 // Get the adodb module
 const ADODB = require('node-adodb');
 ADODB.debug = true;

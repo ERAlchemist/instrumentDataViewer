@@ -1,4 +1,0 @@
-
-
-
-{[DMA 5000 M]-->>---(FTP Export)}-->>--{(Network P:\ drive)-->>(FTP Server)>>----[Windows 10 Network PC]---(Node Server)}
