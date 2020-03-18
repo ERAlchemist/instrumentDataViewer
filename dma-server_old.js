@@ -10,7 +10,6 @@ const pdf = require('pdf-parse');
 const pdfsPath = require('./paths.js').paths[instrumentName];
 const moveFile = require('move-file');
 const os = require('os');
-const reload = require('reload');
 
 class Analysis_DMA {
   constructor(string){
@@ -78,11 +77,6 @@ const getData = () => {
        console.log(err);
     }
 };
-fs.watch(pdfsPath, function(event, trigger){
-  if(event){
-    getData();
-  }
-});
 const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Density (g/cm³)", "Specific Gravity", "Ethanol  OIML-ITS-90 (% v/v)", "PDF"];
   const server = http.createServer((req, res) => {
     res.statusCode = 200;
@@ -95,7 +89,6 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
   } catch (err) {
    console.log(err);
   }
-  
       res.write(`${boilerPlateHTML}
         <tr><thead class="thead-light">${fieldHeaders.map(field => `<th scope="col">${field}</th>`).join('')}</thead></tr>`)
       //add data to HTML table....
@@ -123,14 +116,11 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
          count++;
         }
         res.write(`</tbody></table></div></div></div>`);
-      
         res.end(`  </body>
                   </html>`);
         console.log("display count is " + count);
-       
   }).listen(port, hostname, () => {
     console.log(`${instrumentName} data visible at http://${hostname}:${port}/`);
-   
   });
   
   

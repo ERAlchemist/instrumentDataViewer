@@ -12,6 +12,16 @@ const headerFields = ["Time", "Sample ID", "pH", "TA (g/L)"];
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/html');
+  // fs.watch(tiamoFilePath, "utf8", function(event, trigger){
+  //   if(event){
+  //     try{
+  //       res.write(`<script>reloader()</script>`);
+  //     }catch(err){
+  //       console.log(err);
+  //     }
+     
+  //   }
+  // });
   res.write(`${boilerPlateHTML}`); //boiler plate HTML code
   res.write(`<tr><thead>${headerFields.map(field=>`<th>${field}</th>`).join('')}</thead></tr>`); // table header
     //add data to HTML table....
@@ -22,6 +32,8 @@ const server = http.createServer((req, res) => {
       res.write(`<tbody><tr>${row.map(x=>`<td>${x}</td>`).join('')}</tr>`);
     }
     res.write(`</tbody></table><div class="col"></div></div></div></div>`);
+    
+   
     res.end(`  </body>
               </html>`);
 });

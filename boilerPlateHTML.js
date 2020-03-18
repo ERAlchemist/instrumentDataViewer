@@ -25,11 +25,11 @@ const boilerPlateHTML = (instrumentName, currentVersion ) => `<!doctype html>
      <script src = "https://code.highcharts.com/highcharts.js"></script> 
      <script src = "https://code.highcharts.com/modules/data.js"></script>
      <script>
-         const reloader = () => location.reload(true);
-         $(document).ready(function(){
-           window.setInterval(reloader, 120000);
-           console.log('page reload successful');
-         });
+      const reloader = () => location.reload(true);
+      $(document).ready(function(){
+         window.setInterval(reloader, 120000);
+         console.log('page reload successful');
+       });
      </script>
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
      <a class="navbar-brand" href="">

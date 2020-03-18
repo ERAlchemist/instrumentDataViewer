@@ -1,2 +1,8 @@
+When GonzalesLab network password changes do the following:
 
+On the DMA go to:
+ *  Setup >> Control Panel >> FTP Settings
+ *  Update password for GonzalesLab
+
+This should restore connectivity
 
