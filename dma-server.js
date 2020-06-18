@@ -10,6 +10,7 @@ const pdf = require('pdf-parse');
 const pdfsPath = require('./paths.js').paths[instrumentName];
 const moveFile = require('move-file');
 const os = require('os');
+const reload = require('reload');
 
 class Analysis_DMA {
   constructor(string){
@@ -43,7 +44,12 @@ const process = (name) => {
         }
 };
 const getData = () => {
-  fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
+  try{
+    fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
+  }catch(err){
+    console.log(err);
+  }
+  
   try{
       rawData = fs.readFileSync('./data/dmaData.json');
       records = JSON.parse(rawData);
@@ -59,7 +65,7 @@ const getData = () => {
     let noDuplicates = [];
     set.forEach(id=>{
        let record = dmaRecords.filter(rec=>rec.id == id);
-      noDuplicates.push(record[0]);
+       noDuplicates.push(record[0]);
     });
     dmaRecords = noDuplicates;
     console.log(`${instrumentName}: Total records = ${dmaRecords.length}`);
@@ -72,11 +78,15 @@ const getData = () => {
        console.log(err);
     }
 };
+fs.watch(pdfsPath, function(event, trigger){
+  if(event){
+    getData();
+  }
+});
 const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Density (g/cm³)", "Specific Gravity", "Ethanol  OIML-ITS-90 (% v/v)", "PDF"];
   const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
-  //  fs.readdirSync(pdfsPath).forEach(fileName=>process(pdfsPath+"/"+fileName));
     getData();
   try{
     rawData = fs.readFileSync('./data/dmaData.json');
@@ -86,58 +96,63 @@ const fieldHeaders = ["Date", "Sample ID", "Test Method", "Alcohol (%v/v)", "Den
    console.log(err);
   }
       res.write(`${boilerPlateHTML}
-        <tr><thead class="thead-light">${fieldHeaders.map(field => `<th scope="col">${field}</th>`).join('')}</thead></tr>`)
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Record #</th>
+                ${fieldHeaders.map(field => `<th scope="col">${field}</th>`).join('')}
+            </tr>
+          </thead>
+        <tbody>`
+        )
       //add data to HTML table....
         let count = 0;
-        // let newRecords = strings.filter(x=> x.match(/Sample Information:/)).map(x=> new Analysis_DMA(x)).sort((a,b) => b.id - a.id);
-        // console.log("new records are...");
-        // newRecords.length > 0 ? console.log(newRecords): console.log("No new records created");
-        // let dmaRecords = newRecords.concat(records).sort((a,b)=>b.id-a.id);
-        // let set = [...new Set(dmaRecords.map(x=>x.id))];
-        // let noDuplicates = [];
-        // set.forEach(id=>{
-        //    let record = dmaRecords.filter(rec=>rec.id == id);
-        //   noDuplicates.push(record[0]);
-        // });
-        // dmaRecords = noDuplicates;
-        //  console.log(`${instrumentName}: Total records = ${dmaRecords.length}`);
-        // try {
-        //   fs.writeFileSync('./data/dmaData.JSON',JSON.stringify(dmaRecords), 'utf8');
-        //    console.log(newRecords.length);
-        //    const message = newRecords.length > 0 ? "New data was added to file!" : "No new data found"
-        //    console.log(`${instrumentName}: ${message}`);
-        //  } catch (err){
-        //    console.log(err);
-        // }
-       let records3 = records;
-       for(let i=0; i<records3.length; i++){
-          let rec = records3[i];
+       for(let i=0; i<records.length; i++){
+          let rec = records[i],
+              num = records.length -i;
           if(rec == undefined) continue;
           if(rec.dateTime == "Invalid Date") continue;
-          res.write(`<tbody><tr><td data-toggle="tooltip" title="Time">${rec.dateTime}</td><td data-toggle="tooltip" title="Sample Name">${rec.name}</td><td data-toggle="tooltip" title="Test Method">${rec.method}</td>`)
+          res.write(`
+                        <tr>
+                        <td data-toggle="tooltip" title="Record #" style="border-right: 1px solid;">${num}</td>
+                        <td data-toggle="tooltip" title="Time">${rec.dateTime}</td>
+                        <td data-toggle="tooltip" title="Sample Name">${rec.name}</td>
+                        <td data-toggle="tooltip" title="Test Method">${rec.method}</td>`)
           if(rec.result == undefined) continue;
           let list = rec.result.split('\n');
           list.shift();
           list.pop();
           let counter = 0;
-          list = list.map(part => part.match("Alcohol Condition") && rec.method.trim() == "Alcolyzer Wine-WINE EXT"  ? "@" : part.match("Alcohol Condition") ? "" : part.split(":")[1]);
+          list = list.map(part => part.match("Alcohol Condition") && rec.method.trim() == "Alcolyzer Wine-WINE EXT"  ? "@" : 
+                                  part.match("Alcohol Condition") ? "" : 
+                                  part.split(":")[1]);
           for(let i = 0; i< list.length; i++){
             let part = list[i];
             if(part == "@") continue ;
               res.write(`<td data-toggle="tooltip" title="${fieldHeaders[counter+3]}">${part}</td>`);
-            counter++;
+              counter++;
           }
           let urlParts = rec.url.split('/');
-          res.write(`<td data-toggle="tooltip" title="See PDF"><a href="${`ftp://${hostname}:21/archive/${urlParts[urlParts.length-1]}`}"><img src="https://i2.wp.com/www.uei.com/wp-content/uploads/2017/10/pdf-icon.png" height="80px" width="80px" class="d-inline-block align-top" /></a></td>`);
+          res.write(`<td data-toggle="tooltip" title="See PDF">
+                        <a href="${`ftp://${hostname}:21/archive/${urlParts[urlParts.length-1]}`}">
+                          <img src="https://i2.wp.com/www.uei.com/wp-content/uploads/2017/10/pdf-icon.png" height="80px" width="80px" class="d-inline-block align-top" />
+                        </a>
+                    </td>`);
          count++;
         }
-        res.write(`</tbody></table></div></div></div>`);
+        res.write(`</tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>`);
+      
         res.end(`  </body>
-                  </html>`);
+                </html>`);
         console.log("display count is " + count);
-      //  newRecords = [];
+       
   }).listen(port, hostname, () => {
     console.log(`${instrumentName} data visible at http://${hostname}:${port}/`);
+   
   });
   
 

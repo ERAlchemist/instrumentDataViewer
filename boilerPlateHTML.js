@@ -31,37 +31,55 @@ const boilerPlateHTML = (instrumentName, currentVersion ) => `<!doctype html>
            console.log('page reload successful');
          });
      </script>
+     <style>
+        table {
+          display: flex;
+          flex-flow: column;
+          width: 100%;
+      }
+  
+      tbody{height: 800px; overflow-y: scroll;display:block;}
+      tr {
+          width: 100%;
+          display: table;
+          table-layout: fixed;
+      }
+      th { position: sticky; top: 0; }
+    .table-responsive{height:900px;overflow:scroll;} 
+    thead tr:nth-child(1) th{background: white; position: sticky;top: 0;z-index: 10;}
+     </style>
    <nav class="navbar navbar-expand-lg navbar-light bg-light">
      <a class="navbar-brand" href="">
-       <img src="https://icon-library.net/images/node-js-icon/node-js-icon-11.jpg" height="80px" width="80px" class="d-inline-block align-top" />
+       <img src="https://www.carmatec.com/wp-content/uploads/2019/04/node-js-icon.png" height="80px" width="80px" class="d-inline-block align-top" />
        Instrument Data Viewer   <div class="d-inline-block align-right" style="font-size: 10px;">v. ${currentVersion}</div>
      </a>
        <div class="collapse navbar-collapse" id="navbarNav">
-       <ul class="navbar-nav">
-         <li class="${instrumentName == '855 Auto-Titrator "Tiamo"' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.tiamoServer}"> Tiamo </a>
-         </li>
-         <li class="${instrumentName == '814 Auto-Titrator "TJ"' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.tjServer}"> 'TJ' </a>
-         </li>
-         <li class="${instrumentName == 'Pentra C400' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.pentraServer}"> Pentra C400 </a>
-         </li>
-         <li class="${instrumentName == 'Anton Paar DMA 5000 M' ? "nav-item active" : "nav-item"}">
-           <a class="nav-link" href="${URLs.dmaServer}"> Anton Paar DMA 5000 M </a>
-         </li>
-         <li class="${instrumentName == 'ChemWell' ? "nav-item active" : "nav-item"}">
-          <a class="nav-link" href="${URLs.chemWellServer}"> ChemWell </a>
-       </li>
-       <li class="${instrumentName == 'Futura' ? "nav-item active" : "nav-item"}">
-       <a class="nav-link" href="${URLs.futuraServer}"> Futura </a>
-    </li>
-       </ul>
+        <ul class="navbar-nav">
+          <li class="${instrumentName == '855 Auto-Titrator "Tiamo"' ? "nav-item active" : "nav-item"}">
+            <a class="nav-link" href="${URLs.tiamoServer}"> Tiamo </a>
+          </li>
+          <li class="${instrumentName == '814 Auto-Titrator "TJ"' ? "nav-item active" : "nav-item"}">
+            <a class="nav-link" href="${URLs.tjServer}"> 'TJ' </a>
+          </li>
+          <li class="${instrumentName == 'Pentra C400' ? "nav-item active" : "nav-item"}">
+            <a class="nav-link" href="${URLs.pentraServer}"> Pentra C400 </a>
+          </li>
+          <li class="${instrumentName == 'Anton Paar DMA 5000 M' ? "nav-item active" : "nav-item"}">
+            <a class="nav-link" href="${URLs.dmaServer}"> Anton Paar DMA 5000 M </a>
+          </li>
+          <li class="${instrumentName == 'ChemWell' ? "nav-item active" : "nav-item"}">
+            <a class="nav-link" href="${URLs.chemWellServer}"> ChemWell </a>
+          </li>
+          <li class="${instrumentName == 'Futura' ? "nav-item active" : "nav-item"}">
+            <a class="nav-link" href="${URLs.futuraServer}"> Futura </a>
+          </li>
+        </ul>
      </div>
      </nav>
-     <div class="container">
-       <div class="row">
-         <div class="col-sm-8">
-           <h3>${instrumentName} Data</h3>
-            <table class="table table-bordered table-hover table-sm" id="datatable"> `;
+     <div class="container py-5">
+      <div class="row">
+         <div class="col-xs-7 mx-auto bg-white rounded shadow">
+          <h3>${instrumentName} Data:</h3>
+             <div class="table-responsive">
+              <table class="table table-hover" id="datatable"><!-- boilerPlateEnds-->`;
 exports.boilerPlate = boilerPlateHTML;

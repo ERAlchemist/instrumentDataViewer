@@ -126,18 +126,28 @@ const server = http.createServer((req, res) => {
 
  //boiler plate HTML code
  const boilerPlateHTML = require("./boilerPlateHTML.js").boilerPlate(instrumentName, currentVersion);
-// <span class="sr-only">(current)</span>
-  res.write(`${boilerPlateHTML}
-              <tr><thead class="thead-light"><th scope="col">Date</th><th>Sample ID</th><th scope="col">RS (g/L)</th><th>Acetic Acid (g/L)</th><th scope="col">Malic Acid (g/L)</th><th scope="col">RS4 (g/L)</th><th scope="col">FLAGS</th></thead></tr>
-               <tbody>`);
+
+  let columns = [ "Date", "Sample ID", "RS (g/L)", "Acetic Acid (g/L)", "Malic Acid (g/L)", "RS4 (g/L)", "FLAGS"];
+  res.write(`${boilerPlateHTML}<!-- pentraFirstWrite-->
+    <thead>
+      <tr>
+        <th>Record #</th>`
+      );
+        columns.forEach(
+          (col)=>res.write(`<th scope="col">${col}</th>
+                            `)  
+        );
+  res.write(`</tr></thead>
+  <!-- After thead-->
+    <!-- After first tr-->
+  `);
+
     //add data to HTML table....
     // Used to remove dupicates (if necessary....)
          let arr = merged.concat(oldRecords); // adds old records (from pentraData.json file) to new records 
          arr = arr.sort((a,b)=>a.key-b.key);
          let keySetArr = [...new Set(arr.map(x=>x.key))]; // creates an array of keys without duplicates
          arr = keySetArr.map(x=>arr[arr.map(x=>x.key).indexOf(x)]).sort((a,b)=>b.date - a.date); // uses unique key array to create an array of Analysis objects
-     
-       
          try {
           fs.writeFileSync('./data/pentraData.JSON',JSON.stringify(arr), 'utf8');
            console.log(`${instrumentName}: Data was added to file!`);
@@ -145,21 +155,39 @@ const server = http.createServer((req, res) => {
            console.log(err);
         }
     let count = 0;
-
+    
     for(let i=0; i<arr.length; i++){
       let row = arr[i];
-      res.write(`${row.type == "Control" && row.hasFlags == false ? 
-                  `<tr class="table-success">` : row.type == "Control" && row.hasFlags == true ?`<tr class="table-warning">` : 
-                  '<tr>'}<td data-toggle="tooltip" title="Date Time">${row.date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</td><td data-toggle="tooltip" title="Sample Name">${row.name}</td><td data-toggle="tooltip" title="RS (g/L)">${row.rs != null ? row.rs : ""}</td><td data-toggle="tooltip" title="Acetic Acid (g/L)">${row.acetic != null ? row.acetic : ""}</td><td data-toggle="tooltip" title="Malicic Acid (g/L)">${row.malic != null ? row.malic : ""}</td><td data-toggle="tooltip" title="RS4 (g/L)">${row.rs4 != null ? row.rs4 : ""}</td>${ row.hasFlags ? `<td class="table-warning" data-toggle="tooltip" title="Flags">${row.flags}</td>`: "<td></td>"}</tr>`
+      let num = arr.length-i;
+      res.write(` <!-- Data Starts-->${row.type == "Control" && row.hasFlags == false ? 
+                  `<tr class="table-success">` : 
+                  row.type == "Control" && row.hasFlags == true ?
+                  `<tr class="table-warning">` : 
+                  '<tr>'}
+                  <th scope="row" style="border-right: 1px solid; background-color: white;">${num}</th>
+                    <td data-toggle="tooltip" title="Date Time">${row.date.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</td>
+                    <td data-toggle="tooltip" title="Sample Name">${row.name}</td>
+                    <td data-toggle="tooltip" title="RS (g/L)">${row.rs != null ? row.rs : ""}</td>
+                    <td data-toggle="tooltip" title="Acetic Acid (g/L)" >${row.acetic != null ? row.acetic : ""}</td>
+                    <td data-toggle="tooltip" title="Malicic Acid (g/L)" >${row.malic != null ? row.malic : ""}</td>
+                    <td data-toggle="tooltip" title="RS4 (g/L)" >${row.rs4 != null ? row.rs4 : ""}</td>
+                    ${ row.hasFlags ? `<td class="table-warning" data-toggle="tooltip" title="Flags" >${row.flags}</td>`: `<td ></td>`}
+                  </tr>
+                  `
                 );
       count++;
     }
-    res.write(`</tbody></table>`);
-    
 console.log(`${instrumentName} displaying ${count}  records`);
-res.write(`</tbody></table></div></div></div>`);
-    res.end(`  </body>
-              </html>`);
+res.write(`
+               
+          </table>
+        </div>
+      </div>
+    </div>
+  </div> <!-- close divs-->`);
+  res.end(`  
+</body><!-- close out-->
+</html>`);
 }).listen(port, hostname, () => {
   console.log(`${instrumentName} data visible at http://${hostname}:${port}/`);
 });
