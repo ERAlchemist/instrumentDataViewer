@@ -1,6 +1,6 @@
 require(`./dma-server.js`);
 console.log("first...");
-require(`./pentra-server.js`);
+require(`./pentra.js`);
 console.log("second...");
 require('./tiamo-server.js');
 console.log("third...");

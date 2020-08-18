@@ -1,2 +1,7 @@
 node_modules
 data
+logs
+_dmaDev.js
+tracker.js
+grouper.js
+dataGrab.js

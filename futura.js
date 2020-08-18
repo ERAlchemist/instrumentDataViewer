@@ -9,7 +9,10 @@ const port = 9000;
 const versionInfo = require('./versionInfo.js');
 const currentVersion = versionInfo.version;
 const boilerPlateHTML = require("./boilerPlateHTML.js").boilerPlate(instrumentName, currentVersion);
-const futuraPath = require('./paths.js').paths[instrumentName];
+const futuraPath = require('./paths.js').paths[instrumentName][1];  // [0] indicates primary path  
+                                                                    // [1] indicates secondary path
+const logger = require('./logger.js').writeToLog;
+const logRequest = require('./logger.js').logRequest;
 
 
 const sqlite3 = require('sqlite3').verbose();
@@ -29,8 +32,7 @@ async function getData() {
   let db = new sqlite3.Database(futuraPath, sqlite3.OPEN_READONLY, (err) => {
       if (err) {
         console.error(err.message);
-      }
-      console.log('Connected to the Futura database.');
+      }else console.log('Connected to the Futura database.');
     });
   db.serialize(() => {
     let arr = [];
@@ -45,7 +47,6 @@ async function getData() {
       str += JSON.stringify(row);
      fs.writeFileSync('./data/futuraData.JSON',str, 'utf8');
      });
-  
  })
 
  db.close((err) => {
@@ -74,8 +75,10 @@ async function getData() {
   merged = [];
 }
   getData();
+  logger(instrumentName, "<<<<---STARTED--->>>>");
 const server = http.createServer((req, res) => {
- 
+  logger(instrumentName, logRequest(req));
+  logger(instrumentName, new Date()+":\n___RESPONSE___");
   getData();
   const headerFields = ["Date", "Sample ID", "FSO2", "TSO2"];
     try{
@@ -85,15 +88,26 @@ const server = http.createServer((req, res) => {
       console.log(err);
     }
     res.write(`${boilerPlateHTML}
-              <tr><thead class="thead-light">`);
+              <thead class="thead-light">
+                <tr>`);
     headerFields.forEach( field =>res.write(`<th scope="col">${field}</th>`) )
-    res.write(`</thead></tr>
+    res.write(` </tr>
+              </thead>
               <tbody>`);
     for(let i=0; i<records.length; i++){
       let rec = records[i];
-      res.write(`<tr><td>${new Date(rec.tstamp).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</td><td>${rec.sample_name}</td><td>${rec.fso2}</td><td>${rec.tso2}</td><ul>`);
+      res.write(`<tr>
+                    <td>${new Date(rec.tstamp).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</td>
+                    <td>${rec.sample_name}</td>
+                    <td>${rec.fso2}</td>
+                    <td>${rec.tso2}</td>
+                  <tr>`);
     }
-    res.write(`</tbody></table></div></div></div>`);
+    res.write(`</tbody>
+              </table>
+            </div>
+          </div>
+        </div>`);
       res.end(`  </body>
                 </html>`);
 }).listen(port, hostname, () => {
